@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simplephpmvc-app
+spec:
+  selector:
+    matchLabels:
+      app: simplephpmvc-app
+  template:
+    metadata:
+      labels:
+        app: simplephpmvc-app
+    spec:
+      containers:
+      - name: simplephpmvc-app
+        image: borispacex/simplephpmvc
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80
+        env:
+        - name: MYSQL_DATABASE_SERVICE
+          valueFrom:
+            configMapKeyRef:
+              key: DATABASE_URL
+              name: simplephpmvc-app-configmap
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_DATABASE
+              name: simplephpmvc-app-configmap
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_USER
+              name: simplephpmvc-app-secret
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_PASSWORD
+              name: simplephpmvc-app-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simplephpmvc-app-service
+spec:
+  type: NodePort
+  selector:
+    app: simplephpmvc-app
+  ports:
+  - port: 8080
+    targetPort: 80
+    nodePort: 31000

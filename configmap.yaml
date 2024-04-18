@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simplephpmvc-app-configmap
+data:
+  MYSQL_DATABASE: nw201402
+  DATABASE_URL: simplephpmvc-service
